@@ -40,28 +40,29 @@
   <div class="ring"></div>
 </div>
 
-<!--
-  DÁN ĐÚNG "Web app URL" CỦA BẠN (Deploy > Manage deployments) VÀO DÒNG src BÊN DƯỚI.
-  Apps Script đã bật setXFrameOptionsMode(ALLOWALL) trong Code.gs nên nhúng
-  được qua iframe bình thường.
+<!-- 
+  Thẻ iframe được bổ sung thuộc tính sandbox và allow để vượt qua cơ chế chặn của Chrome
 -->
 <iframe
   id="app-frame"
   src="https://script.google.com/macros/s/AKfycbx52r_fflvLDlPfC20QSU4v3OEYFqtaKkmpOFPNJfGzAdiLOd4K54SLVAimJhYUoNggIQ/exec"
   title="Peeback"
-  allow="clipboard-write"
+  allow="clipboard-write; storage-access"
+  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
 ></iframe>
 
 <script>
   var frame = document.getElementById('app-frame');
   var splash = document.getElementById('splash');
+  
   frame.addEventListener('load', function () {
     setTimeout(function () { splash.classList.add('hide'); }, 200);
   });
-  // Phòng trường hợp mạng chậm/lỗi, tự ẩn splash sau 8 giây để không kẹt màn hình chờ mãi
+
+  // Phòng trường hợp mạng chậm/lỗi, tự ẩn splash sau 8 giây
   setTimeout(function () { splash.classList.add('hide'); }, 8000);
 
-  // Đăng ký service worker để app tải nhanh hơn ở lần mở sau
+  // Đăng ký service worker cho PWA
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
       navigator.serviceWorker.register('service-worker.js').catch(function (err) {
